@@ -9,5 +9,8 @@ dist/
 .vscode/*
 !.vscode/extensions.json
 
-# 冒烟测试的临时产物
-scripts/smoke/.build*.mjs
+# 鐜鍙橀噺鏂囦欢
+.env
+.env.*
+!.env.example
+*.map
