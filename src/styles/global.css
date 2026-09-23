@@ -12,8 +12,8 @@
  * 适合长时间阅读题干与表格的理性简约工具风格。
  *
  * 三层结构（明度由外到内递增，形成明确分区）：
- *   页面外层 / 主内容区  `--ql-bg`      `#f7f8fa`（极浅冷灰）
- *   侧边栏（独立底色）  `--ql-aside`   `#eff1f5`（浅灰，比主区深一档）
+ *   页面外层 / 主内容区  `--ql-bg`      `#f7f8f9`（极浅冷灰）
+ *   侧边栏（独立底色）  `--ql-aside`   `#f0f1f3`（浅灰，比主区深一档）
  *   卡片 / 顶栏         `--ql-surface` `#ffffff`（白，配**微弱柔和阴影**）
  *
  * 主色：中等饱和度、亮度偏高的浅蓝（`--ql-primary` = `#3677eb`，hue=261），通透干净、不发灰不刺眼。
@@ -25,6 +25,9 @@
  * `oklch(L C var(--ql-hue))` 生成；**改这一个数字即可整套换色**，页面内禁止硬编码色值。
  * 状态色（成功/警告/错误）属语义色，固定色相、不跟随 --ql-hue。
  *
+ * ⚠ 单一真源：本文件的 `oklch()` 表达式是**唯一真值**；下文注释里的 HEX 只是便于阅读的
+ *   解析快照，由 `node scripts/tokens.mjs` 现算得出。**若注释与脚本输出不一致，一律以脚本为准**
+ *   （调整任意 L/C 后请复跑该脚本：它同时回归 WCAG 对比度阈值，退出码即校验结果）。
  * HEX 对照与对比度回归：`node scripts/tokens.mjs`
  * （设计稿给 HEX 时用 `node scripts/tokens.mjs --hex "#xxxxxx"` 反解 oklch 后再写进令牌）
  */
@@ -51,22 +54,22 @@
   --ql-primary-line: oklch(0.884 0.052 var(--ql-hue));
 
   /* 表面三层：页面外层（极浅冷灰）< 侧边栏（独立浅灰）< 卡片（白 + 微弱柔和阴影） */
-  --ql-bg: oklch(0.979 0.002 var(--ql-hue)); /* #f7f8fa 页面外层 / 主内容区 */
-  --ql-aside: oklch(0.958 0.003 var(--ql-hue)); /* #eff1f5 侧边栏独立底色 */
+  --ql-bg: oklch(0.979 0.002 var(--ql-hue)); /* #f7f8f9 页面外层 / 主内容区 */
+  --ql-aside: oklch(0.958 0.003 var(--ql-hue)); /* #f0f1f3 侧边栏独立底色 */
   --ql-surface: oklch(1 0 0); /* #ffffff 卡片 / 顶栏 */
-  --ql-surface-soft: oklch(0.97 0.002 var(--ql-hue)); /* #f4f5f7 表头 / 行 hover */
-  --ql-surface-sunken: oklch(0.952 0.003 var(--ql-hue)); /* #edeff3 输入框内部 */
-  --ql-surface-high: oklch(0.931 0.004 var(--ql-hue)); /* #e6e8ee 更明显的悬浮面 */
+  --ql-surface-soft: oklch(0.97 0.002 var(--ql-hue)); /* #f4f5f6 表头 / 行 hover */
+  --ql-surface-sunken: oklch(0.952 0.003 var(--ql-hue)); /* #eeeff1 输入框内部 */
+  --ql-surface-high: oklch(0.931 0.004 var(--ql-hue)); /* #e7e8eb 更明显的悬浮面 */
 
   /* 文字三级（标题 / 正文 / 辅助；辅助 ≥4.5:1、正文 ≥7:1） */
   --ql-title: oklch(0.255 0.013 var(--ql-hue)); /* #1f2329 一级 */
-  --ql-text: oklch(0.394 0.02 var(--ql-hue)); /* #414651 二级 */
+  --ql-text: oklch(0.394 0.02 var(--ql-hue)); /* #404651 二级 */
   --ql-muted: oklch(0.533 0.019 var(--ql-hue)); /* #666d78 三级 */
-  --ql-placeholder: oklch(0.703 0.011 var(--ql-hue)); /* #9aa0a6 占位 */
+  --ql-placeholder: oklch(0.703 0.011 var(--ql-hue)); /* #9ba0a6 占位 */
 
   /* 描边（卡片改用阴影建立边界，描边只用于输入框、分割线等） */
-  --ql-border: oklch(0.922 0.004 var(--ql-hue)); /* #e3e5e9 */
-  --ql-border-light: oklch(0.948 0.003 var(--ql-hue)); /* #eceef1 */
+  --ql-border: oklch(0.922 0.004 var(--ql-hue)); /* #e4e5e8 */
+  --ql-border-light: oklch(0.948 0.003 var(--ql-hue)); /* #edeef0 */
 
   /* 状态色：语义色固定色相（不跟随 --ql-hue）；竞技 / 练习标签进一步降饱和 */
   --ql-success: oklch(0.529 0.084 157);
@@ -369,7 +372,7 @@ a:hover {
 
 /*
  * 卡片化面板：白底 + **微弱柔和阴影**（V2.0 按设计规格恢复阴影；同层「边框 / 阴影」二选一，
- * 因此不再叠加 1px 描边）。在 #f7f8fa 的极浅冷灰基底上，白卡 + 柔和投影形成明确的分层。
+ * 因此不再叠加 1px 描边）。在 #f7f8f9 的极浅冷灰基底上，白卡 + 柔和投影形成明确的分层。
  */
 .ql-panel {
   background: var(--ql-surface);
@@ -512,7 +515,7 @@ a:hover {
 
 .text-mono {
   font-family: 'JetBrains Mono', Consolas, Monaco, 'Courier New', monospace;
-  font-size: 13px;
+  font-size: var(--ql-fs-small);
 }
 
 /* 规则说明块：低干扰的浅底提示 */
@@ -889,7 +892,7 @@ a:hover {
 }
 
 /* hover 用比侧边栏底色（--ql-aside）深一档的 --ql-surface-high，形成轻微下沉反馈；
-   不能沿用 --ql-surface-sunken（#edeff3 与侧栏底色过近，几乎看不出 hover） */
+   不能沿用 --ql-surface-sunken（#eeeff1 与侧栏底色过近，几乎看不出 hover） */
 .el-menu-item:hover {
   background: var(--ql-surface-high);
 }
