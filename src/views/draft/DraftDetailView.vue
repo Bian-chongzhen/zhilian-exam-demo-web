@@ -155,7 +155,7 @@ async function locateQuestionFromQuery() {
           </p>
         </div>
         <div class="page-actions">
-          <el-button @click="router.back()">返回</el-button>
+          <el-button text @click="router.back()">返回</el-button>
           <!-- v1-plus 模块3：公开试卷详情页的收藏入口（私有试卷不提供收藏） -->
           <FavoriteButton
             v-if="detail.draft.visibility === 2"

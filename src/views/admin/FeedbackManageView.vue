@@ -366,7 +366,7 @@ onMounted(load)
       </template>
 
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button text @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="submitHandle">保存</el-button>
       </template>
     </el-dialog>

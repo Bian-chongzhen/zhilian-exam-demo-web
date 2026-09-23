@@ -203,6 +203,7 @@ onMounted(async () => {
                 <span class="action-guard">
                   <el-button
                     size="small"
+                    text
                     :disabled="(knowledgeLinks[row.questionId]?.length ?? 0) === 0"
                     @click="openKnowledge(row)"
                   >

@@ -202,7 +202,7 @@ onMounted(load)
           </p>
         </div>
         <div class="page-actions">
-          <el-button @click="router.back()">返回</el-button>
+          <el-button text @click="router.back()">返回</el-button>
           <el-button type="primary" :loading="saving" @click="save">保存</el-button>
         </div>
       </div>
@@ -348,7 +348,7 @@ onMounted(load)
       </el-table>
       <template #footer>
         <span class="text-tip">已选 {{ pickerSelected.length }} 道</span>
-        <el-button @click="pickerVisible = false">取消</el-button>
+        <el-button text @click="pickerVisible = false">取消</el-button>
         <el-button type="primary" @click="confirmPicker">确定</el-button>
       </template>
     </el-dialog>

@@ -326,8 +326,8 @@ onMounted(load)
         <div class="ql-panel__head">
           <span class="ql-panel__title">基础信息与状态</span>
           <div class="panel-actions">
-            <el-button size="small" @click="router.push(`/drafts/${draftId}`)">预览</el-button>
-            <el-button size="small" @click="router.push('/my-drafts')">返回列表</el-button>
+            <el-button size="small" text @click="router.push(`/drafts/${draftId}`)">预览</el-button>
+            <el-button size="small" text @click="router.push('/my-drafts')">返回列表</el-button>
             <el-button v-if="canEdit" size="small" type="primary" @click="enableDraft">启用试卷</el-button>
             <el-button
               v-else-if="detail.draft.draftStatus === DraftStatus.ENABLED"
@@ -565,7 +565,7 @@ onMounted(load)
         </el-table-column>
       </el-table>
       <template #footer>
-        <el-button @click="bankVisible = false">取消</el-button>
+        <el-button text @click="bankVisible = false">取消</el-button>
         <el-button type="primary" @click="attachSelected">引用所选题目</el-button>
       </template>
     </el-dialog>

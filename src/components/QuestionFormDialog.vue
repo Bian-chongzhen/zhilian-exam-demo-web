@@ -282,7 +282,7 @@ function submit() {
     </el-form>
 
     <template #footer>
-      <el-button @click="visible = false">{{ readOnly ? '关闭' : '取消' }}</el-button>
+      <el-button text @click="visible = false">{{ readOnly ? '关闭' : '取消' }}</el-button>
       <el-button v-if="!readOnly" type="primary" @click="submit">保存</el-button>
     </template>
   </el-dialog>

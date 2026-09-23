@@ -383,7 +383,7 @@ onMounted(load)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="createVisible = false">取消</el-button>
+        <el-button text @click="createVisible = false">取消</el-button>
         <el-button type="primary" @click="submitCreate">创建并去录题</el-button>
       </template>
     </el-dialog>
@@ -399,7 +399,7 @@ onMounted(load)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="saveAsVisible = false">取消</el-button>
+        <el-button text @click="saveAsVisible = false">取消</el-button>
         <el-button type="primary" @click="submitSaveAs">确定</el-button>
       </template>
     </el-dialog>
@@ -438,7 +438,7 @@ onMounted(load)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="editVisible = false">取消</el-button>
+        <el-button text @click="editVisible = false">取消</el-button>
         <el-button type="primary" @click="submitEdit">保存</el-button>
       </template>
     </el-dialog>

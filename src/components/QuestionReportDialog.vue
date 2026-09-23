@@ -101,7 +101,7 @@ async function submit() {
     </el-form>
 
     <template #footer>
-      <el-button @click="visible = false">取消</el-button>
+      <el-button text @click="visible = false">取消</el-button>
       <el-button type="primary" :loading="submitting" @click="submit">提交反馈</el-button>
     </template>
   </el-dialog>

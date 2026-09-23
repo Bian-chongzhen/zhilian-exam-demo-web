@@ -46,7 +46,7 @@ const userStore = useUserStore()
         <slot name="desc">{{ desc || `当前身份：${IdentityLabel[userStore.identity]}` }}</slot>
       </div>
       <div class="state-block__actions">
-        <el-button v-if="showBack" @click="router.back()">返回上一页</el-button>
+        <el-button v-if="showBack" text @click="router.back()">返回上一页</el-button>
         <el-button type="primary" @click="router.push('/')">去公开试卷广场</el-button>
       </div>
     </div>

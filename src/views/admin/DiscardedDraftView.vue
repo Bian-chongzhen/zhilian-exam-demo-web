@@ -39,7 +39,7 @@ onMounted(load)
           废弃试卷<b>不支持恢复</b>，本页为只读审计用途。
         </p>
       </div>
-      <el-button @click="load">刷新</el-button>
+      <el-button text @click="load">刷新</el-button>
     </div>
 
     <div class="rule-tip warn mb24">

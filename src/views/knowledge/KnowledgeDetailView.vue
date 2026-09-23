@@ -129,7 +129,7 @@ onMounted(load)
           </p>
         </div>
         <div class="page-actions">
-          <el-button @click="router.push('/knowledge')">返回广场</el-button>
+          <el-button text @click="router.push('/knowledge')">返回广场</el-button>
           <!-- v1-plus 模块3：知识点收藏（公开知识点才可收藏） -->
           <FavoriteButton
             v-if="detail.knowledge.visibility === 2"

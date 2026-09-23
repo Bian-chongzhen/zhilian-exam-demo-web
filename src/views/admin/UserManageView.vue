@@ -408,7 +408,7 @@ onMounted(load)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="resetDialogVisible = false">取消</el-button>
+        <el-button text @click="resetDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="submitReset">确认重置</el-button>
       </template>
     </el-dialog>
@@ -417,7 +417,7 @@ onMounted(load)
     <el-dialog v-model="roleDialogVisible" title="切换角色" width="460px">
       <p class="role-confirm">{{ roleConfirmText }}</p>
       <template #footer>
-        <el-button @click="roleDialogVisible = false">取消</el-button>
+        <el-button text @click="roleDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="submitRole">确认切换</el-button>
       </template>
     </el-dialog>

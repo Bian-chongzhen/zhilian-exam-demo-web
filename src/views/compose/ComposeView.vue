@@ -303,7 +303,7 @@ onMounted(async () => {
         </el-form-item>
 
         <div class="actions">
-          <el-button :loading="previewing" @click="doPreview">预览候选题目</el-button>
+          <el-button text :loading="previewing" @click="doPreview">预览候选题目</el-button>
           <el-button type="primary" :loading="generating" @click="doGenerate">生成错题试卷</el-button>
           <span class="hint inline-hint">目标题量默认取分类固定题量；可抽数量不足时按实际数量生成</span>
         </div>
