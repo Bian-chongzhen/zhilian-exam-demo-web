@@ -14,3 +14,7 @@ dist/
 .env.*
 !.env.example
 *.map
+
+# 冒烟测试的临时产物：由 `npm run smoke` 用 esbuild 从 v05.ts / v1plus.ts 生成，
+# 每次运行都会重建（约 390KB），属于构建产物而非源码，不入库。
+scripts/smoke/.build*.mjs
