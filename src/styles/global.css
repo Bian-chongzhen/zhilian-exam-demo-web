@@ -1000,22 +1000,29 @@ a:hover {
 }
 
 /*
- * ⑤ 侧边栏滚动条收敛
- * 侧栏用的是 EP 自带的 el-scrollbar（不是原生滚动条）。修复前走 EP 默认：
+ * ⑤ 侧边栏滚动条：隐藏
+ * 侧栏用的是 EP 自带的 el-scrollbar（不是原生滚动条）。EP 默认：
  *   --el-scrollbar-bg-color: var(--el-text-color-secondary)（本项目映射到 --ql-muted #666d78）
- *   且 opacity .3 → 叠在白底上实测渲染 #D1D3D6（0.3×#666d78 + 0.7×#fff，逐通道吻合），
- * 比全站滚动条令牌 --ql-scrollbar(#dadcdf) 更重、观感「外来」。
- * 覆盖后常态 ≈ 0.5×#dadcdf 叠于 #f0f1f3 ≈ #E5E7E9（几乎不显眼但仍可辨），hover 略深。
+ *   且 opacity .3 → 叠在白底上实测渲染 #D1D3D6（0.3×#666d78 + 0.7×#fff，逐通道吻合）。
+ *
+ * 这里把**滑块透明度置 0**，即彻底不可见：
+ *   · 不用 display:none —— 滑块尺寸由 EP 按 bar 的 clientHeight 现算，
+ *     隐藏 bar 会让其高度变 0、可能算出 0 高滑块并产生告警；置 0 透明度则完全无副作用。
+ *   · 不用 !important —— 直接走 EP 自己的变量，不与其 fade 过渡/内联样式抢优先级。
+ *   · 滚动能力不受影响：滚动发生在 .el-scrollbar__wrap（滚轮 / 触控板 / 键盘 / 拖拽均照常）。
+ *   · 若日后想「hover 侧栏时才淡淡浮现」，只需把下面两个值改为 0 / .5 即可。
  *
  * ⚠ --el-scrollbar-* 定义在 .el-scrollbar 自身，写在外层 .shell-aside 上【无效】（会被 EP 压回），
  *    必须落在 .shell-nav —— 它就是 el-scrollbar 的根元素（特异性 0,2,0 > EP 的 0,1,0）。
  * ⚠ 必须带 .shell-aside 前缀：.el-scrollbar__bar 被 el-table 内部复用，全局改会波及所有表格滚动条。
  */
 .shell-aside .shell-nav {
+  /* 颜色仍改走项目令牌：当前透明度为 0 时不起作用，
+     但这样日后要把透明度调回可见时，颜色不会退回 EP 那个偏重的 #666d78 */
   --el-scrollbar-bg-color: var(--ql-scrollbar);
   --el-scrollbar-hover-bg-color: var(--ql-scrollbar-hover);
-  --el-scrollbar-opacity: 0.5;
-  --el-scrollbar-hover-opacity: 0.85;
+  --el-scrollbar-opacity: 0;
+  --el-scrollbar-hover-opacity: 0;
 }
 
 /* ==================== 11. 标签胶囊（16 号 C-1 / §6.1） ==================== */
