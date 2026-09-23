@@ -1,7 +1,7 @@
 /**
  * ⚠ 本文件由 `scripts/icons.mjs` 自动生成，请勿手工修改。
  *
- * 内容：源码中用到的 ph 图标子集（共 39 个：arrows-clockwise, book-bookmark, book-open, books, caret-double-left, caret-double-right, caret-down, caret-left, caret-right, chart-line-up, check, circle-notch, compass, copy, eye, file-dashed, files, flag, folder, gear-six, lock-simple, magic-wand, notebook, pause, pencil-simple, play, seal-check, sign-out, stack, star, star-fill, tag, ticket, trash, tray, user, user-gear, user-minus, warning-circle）。
+ * 内容：源码中用到的 ph 图标子集（共 41 个：arrows-clockwise, book-bookmark, book-open, books, caret-double-left, caret-double-right, caret-down, caret-left, caret-right, chart-line-up, check, circle-notch, clock, compass, copy, eye, file-dashed, files, flag, folder, gear-six, lock-simple, magic-wand, notebook, pause, pencil-simple, play, seal-check, sign-out, stack, star, star-fill, tag, ticket, trash, tray, user, user-gear, user-minus, warning-circle, x）。
  * 为什么不用整包：ph 完整集合 9000+ 图标约 4.5MB，整包会全部进入口 chunk。
  *
  * 新增图标后请执行：npm run icons:sync
@@ -47,6 +47,9 @@ export const phSubset: IconifyJSON = {
     },
     "circle-notch": {
       "body": "<path fill=\"currentColor\" d=\"M232 128a104 104 0 0 1-208 0c0-41 23.81-78.36 60.66-95.27a8 8 0 0 1 6.68 14.54C60.15 61.59 40 93.27 40 128a88 88 0 0 0 176 0c0-34.73-20.15-66.41-51.34-80.73a8 8 0 0 1 6.68-14.54C208.19 49.64 232 87 232 128\"/>"
+    },
+    "clock": {
+      "body": "<path fill=\"currentColor\" d=\"M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m0 192a88 88 0 1 1 88-88a88.1 88.1 0 0 1-88 88m64-88a8 8 0 0 1-8 8h-56a8 8 0 0 1-8-8V72a8 8 0 0 1 16 0v48h48a8 8 0 0 1 8 8\"/>"
     },
     "compass": {
       "body": "<path fill=\"currentColor\" d=\"M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m0 192a88 88 0 1 1 88-88a88.1 88.1 0 0 1-88 88m44.42-143.16l-64 32a8.05 8.05 0 0 0-3.58 3.58l-32 64A8 8 0 0 0 80 184a8.1 8.1 0 0 0 3.58-.84l64-32a8.05 8.05 0 0 0 3.58-3.58l32-64a8 8 0 0 0-10.74-10.74M138 138l-40.11 20.11L118 118l40.15-20.07Z\"/>"
@@ -128,6 +131,9 @@ export const phSubset: IconifyJSON = {
     },
     "warning-circle": {
       "body": "<path fill=\"currentColor\" d=\"M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m0 192a88 88 0 1 1 88-88a88.1 88.1 0 0 1-88 88m-8-80V80a8 8 0 0 1 16 0v56a8 8 0 0 1-16 0m20 36a12 12 0 1 1-12-12a12 12 0 0 1 12 12\"/>"
+    },
+    "x": {
+      "body": "<path fill=\"currentColor\" d=\"M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z\"/>"
     }
   },
   "width": 256,

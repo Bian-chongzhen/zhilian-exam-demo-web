@@ -103,7 +103,7 @@ onMounted(async () => {
     <!-- 未完成答题记录：继续作答入口 -->
     <div v-if="unfinished.length > 0" class="ql-panel ql-panel--tight resume-panel">
       <div class="resume-head">
-        <el-icon class="resume-icon"><Clock /></el-icon>
+        <Icon icon="ph:clock" class="resume-icon" />
         <span class="resume-title">你有 {{ unfinished.length }} 份未完成的答题记录</span>
         <span class="text-sub">退出后可随时回来继续作答，答案已自动保存</span>
       </div>

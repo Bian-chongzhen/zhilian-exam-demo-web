@@ -53,8 +53,8 @@ async function submit() {
         <el-form-item label="用户名">
           <el-input v-model="form.username" placeholder="2-50 字符，全局唯一" @blur="checkName">
             <template #suffix>
-              <el-icon v-if="nameState?.available" color="var(--ql-success)"><Check /></el-icon>
-              <el-icon v-else-if="nameState" color="var(--ql-danger)"><Close /></el-icon>
+              <Icon v-if="nameState?.available" icon="ph:check" color="var(--ql-success)" />
+              <Icon v-else-if="nameState" icon="ph:x" color="var(--ql-danger)" />
             </template>
           </el-input>
           <div v-if="nameState" class="hint" :class="nameState.available ? 'ok' : 'bad'">

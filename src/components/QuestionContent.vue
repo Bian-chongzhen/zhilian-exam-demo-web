@@ -126,8 +126,8 @@ const resultTag = computed(() => {
         />
         <span class="option-key">({{ option.key }})</span>
         <span class="option-text">{{ option.content }}</span>
-        <el-icon v-if="showAnswer && optionState(option.key) === 'correct'" class="mark ok"><Check /></el-icon>
-        <el-icon v-if="showAnswer && optionState(option.key) === 'wrong'" class="mark bad"><Close /></el-icon>
+        <Icon v-if="showAnswer && optionState(option.key) === 'correct'" icon="ph:check" class="mark ok" />
+        <Icon v-if="showAnswer && optionState(option.key) === 'wrong'" icon="ph:x" class="mark bad" />
       </div>
     </div>
     <div v-else class="short-answer-tip text-sub">
