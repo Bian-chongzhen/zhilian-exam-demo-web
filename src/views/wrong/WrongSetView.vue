@@ -381,11 +381,6 @@ onMounted(async () => {
   color: var(--ql-muted);
 }
 
-.empty-hint {
-  border: 1px dashed var(--ql-border);
-  background: var(--ql-surface-soft);
-}
-
 /* 分页条：卡片列表下方独立面板，右对齐 */
 .pager-panel {
   display: flex;

@@ -519,6 +519,12 @@ onMounted(async () => {
   min-width: 300px;
 }
 
+/*
+ * 与 RadioGroup 同行的提示：这是**页面级修饰类，不是对全局 .hint 的重写**。
+ * 该提示位于 `.field-inline` 内部（并非 `.el-form-item__content` 的直接子元素），
+ * 因此全局的 `.el-form-item__content > .hint` 与 `.hint--inline` 都命中不到，
+ * 只能在此补「取消上边距 + 不换行」两点差异（16 号 §6.4：提示块基础形态仍唯一）。
+ */
 .hint.inline {
   margin-top: 0;
   white-space: nowrap;

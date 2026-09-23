@@ -238,7 +238,7 @@ onMounted(load)
             v-if="accuracy && accuracy.categories.length > 0"
             :categories="accuracy.categories"
           />
-          <div v-else class="empty-hint">暂无已判分作答，先去公开试卷广场刷几道题</div>
+          <div v-else class="empty-hint empty-hint--boxed">暂无已判分作答，先去公开试卷广场刷几道题</div>
         </section>
 
         <section class="flat-section">
@@ -380,11 +380,5 @@ onMounted(load)
 
 .actions:first-child {
   padding-top: 0;
-}
-
-.empty-hint {
-  border: 1px dashed var(--ql-border);
-  border-radius: var(--ql-radius-sm);
-  background: var(--ql-surface-soft);
 }
 </style>

@@ -678,11 +678,25 @@ a:hover {
 }
 
 /* ============================ 9. 空状态 ============================ */
+/*
+ * 两种空态载体，用途互斥、形态各只有一种（16 号 §6.4 / 验收 S-12）：
+ *   `.empty-hint`          表格内 / 窄面板的紧凑空态：纯文字居中，无框无底（§6.4.2）
+ *   `.empty-hint--boxed`   区块级"占位"空态：当缺失的是图表等有面积的构件时，
+ *                          用虚线框标出该构件本应占据的位置，避免整段塌陷（如个人主页的准确率图）
+ * 页面级完整空态（插画 + 文案 + 操作按钮）一律用 `EmptyState.vue`，不要用这里。
+ * 本变体原先散落在 MyProfileView 的 scoped 样式里，收敛到此处以保证全站唯一形态。
+ */
 .empty-hint {
   padding: var(--ql-s5) var(--ql-s3);
   text-align: center;
   color: var(--ql-muted);
   font-size: var(--ql-fs-small);
+}
+
+.empty-hint--boxed {
+  border: 1px dashed var(--ql-border);
+  border-radius: var(--ql-radius-sm);
+  background: var(--ql-surface-soft);
 }
 
 /* ============================ 10. Element Plus 组件微调 ============================ */

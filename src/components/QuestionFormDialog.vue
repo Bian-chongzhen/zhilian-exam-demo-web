@@ -223,7 +223,7 @@ function submit() {
               {{ option.key }}
             </el-checkbox>
           </el-checkbox-group>
-          <div class="hint">多选严格判分：全部选对才算正确，错选、漏选均判错</div>
+          <div class="hint hint--offset">多选严格判分：全部选对才算正确，错选、漏选均判错</div>
         </div>
         <div v-else-if="form.questionType === QuestionType.JUDGE">
           <el-radio-group v-model="form.answer" :disabled="readOnly">
@@ -306,9 +306,13 @@ function submit() {
   gap: 16px;
 }
 
-.hint {
-  font-size: 12px;
-  color: var(--ql-muted);
+/*
+ * 这里原先把全局 `.hint` 整条重写了一遍（font-size:12px / color / margin-left），
+ * 其中字号与字色与全局完全一致，只是多了「相对选项右移 12px」。
+ * 重写基础载体名会让同一个 `.hint` 在不同文件里出现第二套定义（16 号 §6.4 要求提示块形态唯一），
+ * 故收敛为只声明差异的修饰类；基础字号/字色/行高一律继承全局 `.hint`。
+ */
+.hint--offset {
   margin-left: 12px;
 }
 </style>

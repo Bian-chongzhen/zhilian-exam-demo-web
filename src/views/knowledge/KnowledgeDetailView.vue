@@ -244,14 +244,7 @@ onMounted(load)
   color: var(--ql-primary-hover);
 }
 
-.tag-flow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-}
-
-/* 标签胶囊 .tag-chip 已收敛到 global.css §11（16 号 C-1），此处不再重复定义 */
+/* 标签胶囊 .tag-flow / .tag-chip 均已收敛到 global.css §11（16 号 C-1），此处不再重复定义 */
 
 .question-links {
   display: flex;
