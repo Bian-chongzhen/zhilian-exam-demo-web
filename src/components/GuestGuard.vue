@@ -48,7 +48,15 @@ function onClick(): void {
   <el-tooltip :content="tip" :disabled="!isDisabled" placement="top">
     <span class="s1-guard">
       <slot :disabled="isDisabled" />
-      <span v-if="showMask" class="s1-guard__mask" @click="onClick" />
+      <span
+        v-if="showMask"
+        class="s1-guard__mask"
+        role="button"
+        tabindex="0"
+        @click="onClick"
+        @keydown.enter="onClick"
+        @keydown.space.prevent="onClick"
+      />
     </span>
   </el-tooltip>
 </template>

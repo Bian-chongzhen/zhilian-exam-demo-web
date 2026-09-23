@@ -75,7 +75,13 @@ onMounted(load)
         <el-table-column label="标题" min-width="260">
           <template #default="{ row }">
             <div class="title-cell">
-              <span class="title-text" @click="router.push(`/knowledge/${row.id}`)">
+              <span
+                class="title-text"
+                role="link"
+                tabindex="0"
+                @click="router.push(`/knowledge/${row.id}`)"
+                @keydown.enter.prevent="router.push(`/knowledge/${row.id}`)"
+              >
                 {{ row.title }}
               </span>
               <span class="text-tip">{{ row.summary || '（无摘要）' }}</span>

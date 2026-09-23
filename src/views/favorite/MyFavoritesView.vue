@@ -116,7 +116,13 @@ onMounted(load)
               class="fav-item"
               :class="{ 'is-unavailable': !item.available }"
             >
-              <div class="fav-main" @click="open(item)">
+              <div
+                class="fav-main"
+                role="link"
+                tabindex="0"
+                @click="open(item)"
+                @keydown.enter.prevent="open(item)"
+              >
                 <div class="fav-title">{{ item.title }}</div>
                 <div class="fav-sub">
                   <span>{{ item.subtitle }}</span>
@@ -161,7 +167,13 @@ onMounted(load)
               class="fav-item"
               :class="{ 'is-unavailable': !item.available }"
             >
-              <div class="fav-main" @click="open(item)">
+              <div
+                class="fav-main"
+                role="link"
+                tabindex="0"
+                @click="open(item)"
+                @keydown.enter.prevent="open(item)"
+              >
                 <div class="fav-title">{{ item.title }}</div>
                 <div class="fav-sub">
                   <span>{{ item.subtitle }}</span>
@@ -206,7 +218,13 @@ onMounted(load)
               class="fav-item"
               :class="{ 'is-unavailable': !item.available }"
             >
-              <div class="fav-main" @click="open(item)">
+              <div
+                class="fav-main"
+                role="link"
+                tabindex="0"
+                @click="open(item)"
+                @keydown.enter.prevent="open(item)"
+              >
                 <div class="fav-title">{{ item.title }}</div>
                 <div class="fav-sub">
                   <span>{{ item.subtitle }}</span>

@@ -139,7 +139,13 @@ onMounted(() => {
   <div class="shell">
     <!-- 左侧可折叠导航 -->
     <aside class="shell-aside" :class="{ 'is-collapsed': collapsed }">
-      <div class="shell-brand" @click="router.push('/')">
+      <div
+        class="shell-brand"
+        role="link"
+        tabindex="0"
+        @click="router.push('/')"
+        @keydown.enter.prevent="router.push('/')"
+      >
         <div class="brand-logo">知</div>
         <div v-show="!collapsed" class="brand-text">
           <div class="brand-name">知练题库</div>
@@ -184,6 +190,7 @@ onMounted(() => {
             text
             class="collapse-btn"
             :title="collapsed ? '展开导航' : '折叠导航'"
+            :aria-label="collapsed ? '展开导航' : '折叠导航'"
             @click="toggleCollapse"
           >
             <Icon
@@ -205,7 +212,7 @@ onMounted(() => {
 
           <!-- 演示导航入口（不伪造站内信等业务数据，仅作使用指引） -->
           <el-dropdown trigger="click" @command="handleCommand">
-            <el-button text class="icon-btn">
+            <el-button text class="icon-btn" title="演示导航" aria-label="演示导航">
               <Icon icon="ph:compass" class="ico-btn" />
             </el-button>
             <template #dropdown>

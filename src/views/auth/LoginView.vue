@@ -115,7 +115,16 @@ async function submit() {
         <span class="text-tip">演示账号（密码均为 123456）</span>
       </el-divider>
       <div class="demo-accounts">
-        <div v-for="item in demoAccounts" :key="item.username" class="demo-account" @click="fill(item)">
+        <div
+          v-for="item in demoAccounts"
+          :key="item.username"
+          class="demo-account"
+          role="button"
+          tabindex="0"
+          @click="fill(item)"
+          @keydown.enter="fill(item)"
+          @keydown.space.prevent="fill(item)"
+        >
           <div class="demo-label">{{ item.label }}</div>
           <div class="demo-desc">{{ item.desc }}</div>
         </div>

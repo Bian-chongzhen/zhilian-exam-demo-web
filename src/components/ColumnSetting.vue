@@ -48,7 +48,7 @@ const checked = computed({
     popper-class="column-setting__popover"
   >
     <template #reference>
-      <el-button text class="column-setting__trigger" title="列表设置">
+      <el-button text class="column-setting__trigger" title="列表设置" aria-label="列表设置">
         <Icon icon="ph:gear-six" />
       </el-button>
     </template>

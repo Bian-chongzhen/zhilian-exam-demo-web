@@ -158,7 +158,13 @@ onMounted(async () => {
         <el-table-column label="试卷名称" min-width="300">
           <template #default="{ row }">
             <div class="draft-cell">
-              <span class="draft-name" @click="router.push(`/drafts/${row.id}`)">{{ row.draftName }}</span>
+              <span
+                class="draft-name"
+                role="link"
+                tabindex="0"
+                @click="router.push(`/drafts/${row.id}`)"
+                @keydown.enter.prevent="router.push(`/drafts/${row.id}`)"
+              >{{ row.draftName }}</span>
               <span class="text-tip">{{ row.questionCount }} 题 · {{ row.categoryName }}</span>
             </div>
           </template>

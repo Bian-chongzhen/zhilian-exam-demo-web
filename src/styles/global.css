@@ -1290,3 +1290,23 @@ body.ql-narrow .auth-page {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==================== 21. 自定义交互元素的键盘焦点环（可访问性） ==================== */
+/*
+ * Element Plus 自带 38 条 `:focus-visible` 规则，其组件（按钮 / 链接 / 输入 / 菜单项）
+ * 的键盘焦点本来就可见，**不需要也不应被覆盖**。
+ *
+ * 但本站在表格单元格、卡片、品牌区里用了若干「非语义可点元素」
+ * （`<span class="draft-name" @click>` 这类）。它们原先既不可聚焦、也没有焦点样式，
+ * 于是键盘用户完全无法到达（鼠标用户看不出问题，因此容易被漏掉）。
+ * 这些元素现已补上 `role="link" | "button"` + `tabindex="0"`，本规则负责给它们焦点环。
+ *
+ * 用 `:focus-visible` 而非 `:focus`：只在键盘导航时出现，鼠标点击不显示，
+ * 避免给鼠标用户添加视觉噪音。轮廓颜色取主色 —— 16 号 §5.1 已把「焦点环」列为
+ * 主色的合法用途之一，因此这里不新增色值。
+ */
+[role='link']:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--ql-primary);
+  outline-offset: 2px;
+}

@@ -257,7 +257,13 @@ onMounted(load)
           <el-table :data="pagedKnowledge" size="small">
             <el-table-column label="标题" min-width="260">
               <template #default="{ row }">
-                <span class="knowledge-title" @click="router.push(`/knowledge/${row.id}`)">
+                <span
+                  class="knowledge-title"
+                  role="link"
+                  tabindex="0"
+                  @click="router.push(`/knowledge/${row.id}`)"
+                  @keydown.enter.prevent="router.push(`/knowledge/${row.id}`)"
+                >
                   {{ row.title }}
                 </span>
               </template>
