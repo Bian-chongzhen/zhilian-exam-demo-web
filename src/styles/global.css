@@ -1,0 +1,1275 @@
+/**
+ * 知练题库系统 · 设计系统
+ * 依据《8、页面布局设计.md》：现代简约 SaaS 后台，低饱和度，重视长题干阅读体验。
+ * 所有间距基于 8px 栅格。
+ */
+
+/* ============================ 1. 设计令牌 ============================ */
+/*
+ * 配色（V2.0 · 清爽浅白主题，按设计规格重做）
+ *
+ * 设计定位：刷题知识库管理后台的浅色主题 —— 浅白页面、清爽低干扰、**保留区块分层**，
+ * 适合长时间阅读题干与表格的理性简约工具风格。
+ *
+ * 三层结构（明度由外到内递增，形成明确分区）：
+ *   页面外层 / 主内容区  `--ql-bg`      `#f7f8fa`（极浅冷灰）
+ *   侧边栏（独立底色）  `--ql-aside`   `#eff1f5`（浅灰，比主区深一档）
+ *   卡片 / 顶栏         `--ql-surface` `#ffffff`（白，配**微弱柔和阴影**）
+ *
+ * 主色：中等饱和度、亮度偏高的浅蓝（`--ql-primary` = `#3677eb`，hue=261），通透干净、不发灰不刺眼。
+ *   ⚠ 主色只做「高亮」：按钮、链接、图标、选中菜单文字、左侧指示条、焦点环；
+ *     **大面积背景绝不用主色本体**，需要浅底时一律用 `--ql-primary-soft`（`#e8f0fe` 极浅同色系）。
+ *   ⚠ 实心按钮填充 `--ql-primary-fill`（`#2d6cdd`）比主色深一档，唯一原因是让其上白字达到 4.5:1。
+ *
+ * 机制不变（仍满足 16 号 S-1 / S-3）：整套颜色由**单一 hue 参数** `--ql-hue` 经
+ * `oklch(L C var(--ql-hue))` 生成；**改这一个数字即可整套换色**，页面内禁止硬编码色值。
+ * 状态色（成功/警告/错误）属语义色，固定色相、不跟随 --ql-hue。
+ *
+ * HEX 对照与对比度回归：`node scripts/tokens.mjs`
+ * （设计稿给 HEX 时用 `node scripts/tokens.mjs --hex "#xxxxxx"` 反解 oklch 后再写进令牌）
+ */
+:root {
+  /* 全站色相参数：改这一个数字即可整套换色（V2.0 取 261 = 通透浅蓝） */
+  --ql-hue: 261;
+
+  /* 主色：中等饱和度、亮度偏高的浅蓝（#3677eb）；想更浅用 #4e8cf2、想更深用 #3677eb→#3373e9 */
+  --ql-primary: oklch(0.591 0.188 var(--ql-hue));
+  --ql-primary-hover: oklch(0.555 0.185 var(--ql-hue));
+  --ql-primary-active: oklch(0.513 0.173 var(--ql-hue));
+  /*
+   * 实心按钮填充：比主色深一档（#2d6cdd），唯一目的是让其上的白字达到 4.5:1。
+   * 主色本体（#3677eb）留给文字 / 图标 / 高亮 —— 它作为文字在浅底上约 3.7:1，
+   * 是「亮度偏高的浅蓝」这一设计取向的物理上限（详见 16 号 §5.1 的说明）。
+   */
+  --ql-primary-fill: oklch(0.555 0.185 var(--ql-hue));
+  --ql-primary-fill-hover: oklch(0.513 0.173 var(--ql-hue));
+  /* 极浅同色系底：侧边选中菜单 / 提示块 —— 大面积浅底一律走这里，不用主色本体 */
+  --ql-primary-soft: oklch(0.953 0.021 var(--ql-hue));
+  --ql-primary-soft-hover: oklch(0.926 0.033 var(--ql-hue));
+  --ql-on-primary: oklch(1 0 0);
+  --ql-on-primary-container: oklch(0.505 0.212 263);
+  --ql-primary-line: oklch(0.884 0.052 var(--ql-hue));
+
+  /* 表面三层：页面外层（极浅冷灰）< 侧边栏（独立浅灰）< 卡片（白 + 微弱柔和阴影） */
+  --ql-bg: oklch(0.979 0.002 var(--ql-hue)); /* #f7f8fa 页面外层 / 主内容区 */
+  --ql-aside: oklch(0.958 0.003 var(--ql-hue)); /* #eff1f5 侧边栏独立底色 */
+  --ql-surface: oklch(1 0 0); /* #ffffff 卡片 / 顶栏 */
+  --ql-surface-soft: oklch(0.97 0.002 var(--ql-hue)); /* #f4f5f7 表头 / 行 hover */
+  --ql-surface-sunken: oklch(0.952 0.003 var(--ql-hue)); /* #edeff3 输入框内部 */
+  --ql-surface-high: oklch(0.931 0.004 var(--ql-hue)); /* #e6e8ee 更明显的悬浮面 */
+
+  /* 文字三级（标题 / 正文 / 辅助；辅助 ≥4.5:1、正文 ≥7:1） */
+  --ql-title: oklch(0.255 0.013 var(--ql-hue)); /* #1f2329 一级 */
+  --ql-text: oklch(0.394 0.02 var(--ql-hue)); /* #414651 二级 */
+  --ql-muted: oklch(0.533 0.019 var(--ql-hue)); /* #666d78 三级 */
+  --ql-placeholder: oklch(0.703 0.011 var(--ql-hue)); /* #9aa0a6 占位 */
+
+  /* 描边（卡片改用阴影建立边界，描边只用于输入框、分割线等） */
+  --ql-border: oklch(0.922 0.004 var(--ql-hue)); /* #e3e5e9 */
+  --ql-border-light: oklch(0.948 0.003 var(--ql-hue)); /* #eceef1 */
+
+  /* 状态色：语义色固定色相（不跟随 --ql-hue）；竞技 / 练习标签进一步降饱和 */
+  --ql-success: oklch(0.529 0.084 157);
+  --ql-success-soft: oklch(0.96 0.015 158);
+  --ql-success-line: oklch(0.887 0.039 158);
+  --ql-warning: oklch(0.532 0.096 79);
+  --ql-warning-soft: oklch(0.97 0.024 83);
+  --ql-warning-line: oklch(0.891 0.058 86);
+  --ql-danger: oklch(0.547 0.111 24);
+  --ql-danger-soft: oklch(0.959 0.014 23);
+  --ql-danger-line: oklch(0.881 0.037 24);
+
+  /* 滚动条（中性灰，存在感降到最低） */
+  --ql-scrollbar: oklch(0.894 0.004 var(--ql-hue));
+  --ql-scrollbar-hover: oklch(0.834 0.012 var(--ql-hue));
+
+  /* 圆角（不变） */
+  --ql-radius: 8px;
+  --ql-radius-sm: 6px;
+  --ql-radius-lg: 12px;
+
+  /* 阴影：微弱柔和的双层投影（单层容易生硬），用标题色低比例混合现算，避免纯黑发灰 */
+  --ql-shadow: 0 1px 2px color-mix(in oklab, var(--ql-title) 4%, transparent),
+    0 1px 3px color-mix(in oklab, var(--ql-title) 6%, transparent);
+  --ql-shadow-hover: 0 2px 4px color-mix(in oklab, var(--ql-title) 6%, transparent),
+    0 4px 12px color-mix(in oklab, var(--ql-title) 8%, transparent);
+  --ql-shadow-pop: 0 8px 24px color-mix(in oklab, var(--ql-title) 14%, transparent);
+
+  /* 间距（8px 栅格，不变） */
+  --ql-s1: 8px;
+  --ql-s2: 16px;
+  --ql-s3: 24px;
+  --ql-s4: 32px;
+  --ql-s5: 40px;
+
+  /* 字号层级（不变） */
+  --ql-fs-page: 20px;
+  --ql-fs-section: 16px;
+  --ql-fs-body: 14px;
+  --ql-fs-small: 13px;
+  --ql-fs-tip: 12px;
+
+  /* 动效：统一弹簧缓动（16 号 §7 H-1：禁止 ease-in-out / linear） */
+  --ql-ease-spring: cubic-bezier(0.22, 1.2, 0.36, 1);
+  --ql-dur-fast: 0.18s;
+  --ql-dur-panel: 0.28s;
+
+  /* 布局尺寸 */
+  --ql-aside-w: 232px;
+  --ql-aside-w-collapsed: 64px;
+  --ql-header-h: 60px;
+  /* 窄屏提示条高度（低于 1280px 时出现，见文件末尾） */
+  --ql-tip-h: 36px;
+}
+
+/* ==================== 2. Element Plus 主题变量覆盖 ==================== */
+/*
+ * 使用 Element Plus **默认浅色主题**（不引入暗色主题包），在 :root 内把 EP 变量对齐到本项目的设计令牌。
+ * `light-N` 在 EP 里的语义是「向白色混合 N×10%」；这里用 color-mix 现算（而不是写死 5 个色值），
+ * 好处是**改 --ql-hue 时这些派生色会自动跟着变**，不会各自漂移。
+ * 混白目标用 --ql-on-primary（近白，而非硬编码 #fff），同样是为了不新增硬编码色值。
+ */
+:root {
+  /* 主色族（含 EP 组件内部用到的 light-N 派生色） */
+  --el-color-primary: var(--ql-primary);
+  --el-color-primary-light-3: color-mix(in oklab, var(--ql-primary) 70%, var(--ql-on-primary));
+  --el-color-primary-light-5: color-mix(in oklab, var(--ql-primary) 50%, var(--ql-on-primary));
+  --el-color-primary-light-7: color-mix(in oklab, var(--ql-primary) 30%, var(--ql-on-primary));
+  --el-color-primary-light-8: color-mix(in oklab, var(--ql-primary) 20%, var(--ql-on-primary));
+  --el-color-primary-light-9: color-mix(in oklab, var(--ql-primary) 10%, var(--ql-on-primary));
+  --el-color-primary-dark-2: var(--ql-primary-hover);
+
+  /* 状态色 */
+  --el-color-success: var(--ql-success);
+  --el-color-success-light-3: color-mix(in oklab, var(--ql-success) 70%, var(--ql-on-primary));
+  --el-color-success-light-5: color-mix(in oklab, var(--ql-success) 50%, var(--ql-on-primary));
+  --el-color-success-light-7: color-mix(in oklab, var(--ql-success) 30%, var(--ql-on-primary));
+  --el-color-success-light-8: color-mix(in oklab, var(--ql-success) 20%, var(--ql-on-primary));
+  --el-color-success-light-9: var(--ql-success-soft);
+  --el-color-warning: var(--ql-warning);
+  --el-color-warning-light-3: color-mix(in oklab, var(--ql-warning) 70%, var(--ql-on-primary));
+  --el-color-warning-light-5: color-mix(in oklab, var(--ql-warning) 50%, var(--ql-on-primary));
+  --el-color-warning-light-7: color-mix(in oklab, var(--ql-warning) 30%, var(--ql-on-primary));
+  --el-color-warning-light-8: color-mix(in oklab, var(--ql-warning) 20%, var(--ql-on-primary));
+  --el-color-warning-light-9: var(--ql-warning-soft);
+  --el-color-danger: var(--ql-danger);
+  --el-color-error: var(--ql-danger);
+  --el-color-danger-light-3: color-mix(in oklab, var(--ql-danger) 70%, var(--ql-on-primary));
+  --el-color-danger-light-5: color-mix(in oklab, var(--ql-danger) 50%, var(--ql-on-primary));
+  --el-color-danger-light-7: color-mix(in oklab, var(--ql-danger) 30%, var(--ql-on-primary));
+  --el-color-danger-light-8: color-mix(in oklab, var(--ql-danger) 20%, var(--ql-on-primary));
+  --el-color-danger-light-9: var(--ql-danger-soft);
+  --el-color-error-light-3: var(--el-color-danger-light-3);
+  --el-color-error-light-5: var(--el-color-danger-light-5);
+  --el-color-error-light-7: var(--el-color-danger-light-7);
+  --el-color-error-light-8: var(--el-color-danger-light-8);
+  --el-color-error-light-9: var(--ql-danger-soft);
+  --el-color-info: var(--ql-muted);
+  --el-color-info-light-3: color-mix(in oklab, var(--ql-muted) 70%, var(--ql-on-primary));
+  --el-color-info-light-5: color-mix(in oklab, var(--ql-muted) 50%, var(--ql-on-primary));
+  --el-color-info-light-7: color-mix(in oklab, var(--ql-muted) 30%, var(--ql-on-primary));
+  --el-color-info-light-8: color-mix(in oklab, var(--ql-muted) 20%, var(--ql-on-primary));
+  --el-color-info-light-9: var(--ql-surface-soft);
+
+  /* 文字层级 */
+  --el-text-color-primary: var(--ql-title);
+  --el-text-color-regular: var(--ql-text);
+  --el-text-color-secondary: var(--ql-muted);
+  --el-text-color-placeholder: var(--ql-placeholder);
+  --el-text-color-disabled: var(--ql-placeholder);
+
+  /* 描边 */
+  --el-border-color: var(--ql-border);
+  --el-border-color-light: var(--ql-border-light);
+  --el-border-color-lighter: var(--ql-border-light);
+  --el-border-color-extra-light: var(--ql-surface-soft);
+
+  /* 填充与背景 */
+  /*
+   * ⚠ `--el-fill-color-blank` 是 EP 组件的**基础填充色**，不只输入框：
+   *   输入框 / textarea / select、**el-collapse 的 header 与 content 背景**都用它。
+   * 之前设成 --ql-surface-sunken（灰 #eeeff1），导致编辑页的输入区与「我的批注」
+   * 折叠面板内容区在纯白卡片上整片发暗。改回白色 ——
+   * EP 的输入框/textarea 自带 1px inset 描边，白底不会与卡片糊在一起。
+   */
+  --el-fill-color-blank: var(--ql-surface);
+  --el-fill-color-light: var(--ql-surface-soft);
+  --el-fill-color-lighter: var(--ql-surface-soft);
+  --el-fill-color-dark: var(--ql-surface-high);
+  --el-fill-color-darker: var(--ql-surface-sunken);
+  --el-bg-color: var(--ql-surface);
+  --el-bg-color-page: var(--ql-bg);
+  --el-bg-color-overlay: var(--ql-surface);
+
+  /* 圆角 / 字号 / 阴影（沿用既有规范） */
+  --el-border-radius-base: 8px;
+  --el-border-radius-small: 6px;
+  --el-font-size-base: 14px;
+  --el-box-shadow-light: var(--ql-shadow);
+  --el-box-shadow: var(--ql-shadow-hover);
+  --el-box-shadow-dark: var(--ql-shadow-pop);
+  /*
+   * v-loading 遮罩底色（EP 的 .el-loading-mask 直接用它当 background-color）。
+   * ⚠ 必须是**浅色**：本主题是固定浅色基调（V2.0 hue=261 浅蓝），遮罩要「近白磨砂」，
+   * 而不是深色。此前误设为 color-mix(--ql-title 45%)，导致所有带 v-loading 的
+   * 页面/表格在加载与切换时闪出一整块深灰「黑框」（全站 25 处受影响），
+   * 这里改为由卡片表面色（近白）现算，既能跟随 --ql-hue，又保持浅色语义。
+   * 弹窗遮罩是另一套变量（--el-overlay-color-lighter，默认暗色），不受此影响。
+   */
+  --el-mask-color: color-mix(in oklab, var(--ql-surface) 85%, transparent);
+}
+
+/* ============================ 3. 基础重置 ============================ */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* 仅 PC 端：最小宽度 1280px（规范硬性约束） */
+  min-width: 1280px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  font-size: var(--ql-fs-body);
+  line-height: 1.6;
+  color: var(--ql-text);
+  /*
+   * 背景：中性冷白基底 + 极低对比的主色光晕 + 细微噪点（纸感）
+   * 依据《16、样式优化.md》§5.5「背景不得纯平；渐变限同色相、幅度 ≤ 8%」。
+   * V2.0 起基底为极浅冷灰（#f7f8f9），只在左上角留一层 5% 的主色光晕，
+   * 避免整屏带紫的观感；噪点提供「纸感」而不增加色相。
+   * 实现说明：噪点与光晕都作为 body 的**多层 background**（不用 z-index:-1 的伪元素），
+   * 天然位于所有内容之下，不需要动层级、也不会盖住文字。
+   * 噪点强度写在 SVG 内部的 opacity 上（CSS 无法给单个背景图层设透明度）；
+   * 颜色用 color-mix 引用点缀色令牌，避免新增硬编码色值。
+   */
+  background-color: var(--ql-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E"),
+    radial-gradient(
+      1200px 620px at 12% -10%,
+      color-mix(in srgb, var(--ql-primary) 5%, transparent),
+      transparent 66%
+    );
+  background-repeat: repeat, no-repeat;
+  background-size: 160px 160px, auto;
+  background-attachment: fixed, fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  color: var(--ql-title);
+  font-weight: 600;
+}
+
+a {
+  color: var(--ql-primary);
+  text-decoration: none;
+  transition: color var(--ql-dur-fast) var(--ql-ease-spring);
+}
+
+a:hover {
+  color: var(--ql-primary-hover);
+}
+
+/* 滚动条：细、低对比 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ql-scrollbar);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ql-scrollbar-hover);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ============================ 4. 页面骨架 ============================ */
+.page {
+  /*
+   * 主内容左右留白（上下不等：24 / 32 / 40，见 16 号 §5.4.3）。
+   * 不再用 margin: 0 auto 强制水平居中：主内容区「左对齐于侧边栏之后 + 右侧自然留白」
+   * （16 号 §5.4 非对称版式，替换旧「完全居中」）。block 元素默认即左对齐，
+   * 因此这里只保留 max-width 上限，不写居中声明。
+   */
+  padding: var(--ql-s3) var(--ql-s4) var(--ql-s5);
+  max-width: 1440px;
+}
+
+/*
+ * 扁平表单型页面的「收窄列」：错题组卷 / 我的主页 / 他人主页 / 知识点详情
+ * 若让 12 列栅格或宽表格铺满 .page 的 1440px 内容区，字段会横向散开、右侧留大片空白；
+ * 收窄到 1088px（内容区 1024px）后仍与 .page 一样左对齐（不居中），符合 §5.4。
+ * 1088 是算出来的：内容区 1024px 下 f-6 字段的控件区有 408px，放得下「匹配模式」等单选组；
+ * 他人主页三张表的列宽合计（最小 700~830px）也在 1024px 内，不会触发表格横向滚动。
+ */
+.page.page--column {
+  max-width: 1088px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ql-s3);
+  margin-bottom: var(--ql-s3);
+}
+
+.page-title {
+  font-size: var(--ql-fs-page);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ql-title);
+  line-height: 1.4;
+}
+
+.page-desc {
+  margin: var(--ql-s1) 0 0;
+  font-size: var(--ql-fs-small);
+  color: var(--ql-muted);
+  line-height: 1.7;
+  max-width: 900px;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ql-s1);
+  flex-shrink: 0;
+}
+
+/* 区块标题（模块标题层级） */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--ql-s1);
+  font-size: var(--ql-fs-section);
+  font-weight: 600;
+  color: var(--ql-title);
+  margin-bottom: var(--ql-s2);
+}
+
+/*
+ * 卡片化面板：白底 + **微弱柔和阴影**（V2.0 按设计规格恢复阴影；同层「边框 / 阴影」二选一，
+ * 因此不再叠加 1px 描边）。在 #f7f8fa 的极浅冷灰基底上，白卡 + 柔和投影形成明确的分层。
+ */
+.ql-panel {
+  background: var(--ql-surface);
+  border-radius: var(--ql-radius);
+  box-shadow: var(--ql-shadow);
+  padding: var(--ql-s3);
+  margin-bottom: var(--ql-s3);
+}
+
+.ql-panel--tight {
+  padding: var(--ql-s2);
+}
+
+.ql-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ql-s2);
+  padding-bottom: var(--ql-s2);
+  margin-bottom: var(--ql-s2);
+  border-bottom: 1px solid var(--ql-border-light);
+}
+
+.ql-panel__title {
+  font-size: var(--ql-fs-section);
+  font-weight: 600;
+  color: var(--ql-title);
+}
+
+.ql-panel__extra {
+  font-size: var(--ql-fs-tip);
+  color: var(--ql-muted);
+}
+
+/* 筛选区：与表格明确分组 */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ql-s2);
+  padding: var(--ql-s2) var(--ql-s2);
+  background: var(--ql-surface);
+  border-radius: var(--ql-radius);
+  box-shadow: var(--ql-shadow);
+  margin-bottom: var(--ql-s3);
+}
+
+.filter-bar > .el-select,
+.filter-bar > .el-input {
+  width: auto;
+}
+
+.filter-bar__spacer {
+  flex: 1;
+}
+
+/* 表格分页条：与表格同处一个卡片内，右对齐 */
+.table-pager {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--ql-s2) var(--ql-s3);
+  border-top: 1px solid var(--ql-border-light);
+}
+
+/*
+ * 扁平分区：不使用卡片外框，内容直接铺在页面底色上，用分割线分段。
+ * 适合字段多、需要"宽而矮"的表单型页面（如错题组卷）。
+ */
+.flat-section {
+  padding-bottom: var(--ql-s3);
+  margin-bottom: var(--ql-s3);
+  border-bottom: 1px solid var(--ql-border);
+}
+
+.flat-section:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.flat-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ql-s2);
+  margin-bottom: var(--ql-s2);
+}
+
+.flat-section__title {
+  font-size: var(--ql-fs-section);
+  font-weight: 600;
+  color: var(--ql-title);
+}
+
+.flat-section__extra {
+  font-size: var(--ql-fs-tip);
+  color: var(--ql-muted);
+}
+
+/* 同一行内并排的字段与操作 */
+.field-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--ql-s1);
+  width: 100%;
+}
+
+.field-inline .grow {
+  flex: 1;
+  min-width: 0;
+}
+
+/*
+ * el-row 的 gutter 通过负外边距实现，在固定宽度的内容区（以及对话框内）会溢出 1 个 gutter，
+ * 导致出现横向滚动条。这里统一抵消负边距，改为由 el-col 自身内边距承担间距。
+ */
+.el-row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* ============================ 5. 文字与提示 ============================ */
+.text-title {
+  color: var(--ql-title);
+}
+
+.text-body {
+  color: var(--ql-text);
+}
+
+.text-sub {
+  color: var(--ql-muted);
+}
+
+.text-tip {
+  font-size: var(--ql-fs-tip);
+  color: var(--ql-muted);
+  line-height: 1.7;
+}
+
+.text-mono {
+  font-family: 'JetBrains Mono', Consolas, Monaco, 'Courier New', monospace;
+  font-size: 13px;
+}
+
+/* 规则说明块：低干扰的浅底提示 */
+.rule-tip {
+  background: var(--ql-primary-soft);
+  border: 1px solid var(--ql-primary-line);
+  border-left: 3px solid var(--ql-primary);
+  border-radius: var(--ql-radius-sm);
+  padding: var(--ql-s2);
+  font-size: var(--ql-fs-small);
+  color: var(--ql-text);
+  line-height: 1.75;
+}
+
+.rule-tip.warn {
+  background: var(--ql-warning-soft);
+  border-color: var(--ql-warning-line);
+  border-left-color: var(--ql-warning);
+}
+
+.rule-tip b {
+  color: var(--ql-title);
+}
+
+.hint {
+  font-size: var(--ql-fs-tip);
+  color: var(--ql-muted);
+  line-height: 1.7;
+  margin-top: 4px;
+}
+
+/*
+ * 表单内的说明文字必须独占一行。
+ * Element Plus 的 `.el-form-item__content` 是 `display: flex; flex-wrap: wrap` 容器，
+ * `.hint` 默认会作为一个 flex item 被挤在控件右侧（「可见性」的说明就紧贴着单选按钮）。
+ * 给 `flex-basis: 100%` 让它换行即可 —— **不改 content 的 display**，
+ * 因此同一 content 内多个控件并排的布局（如开关 + 短说明）完全不受影响。
+ */
+.el-form-item__content > .hint {
+  flex-basis: 100%;
+  margin-top: 4px;
+}
+
+/* 确实需要与控件同行的短说明（如开关旁的补充）显式声明 */
+.el-form-item__content > .hint.hint--inline {
+  flex-basis: auto;
+  margin-top: 0;
+}
+
+.hint.ok {
+  color: var(--ql-success);
+}
+
+.hint.bad {
+  color: var(--ql-danger);
+}
+
+.hint.warn {
+  color: var(--ql-warning);
+}
+
+/* ============================ 6. 间距工具（8 的倍数） ============================ */
+.mb8 {
+  margin-bottom: var(--ql-s1);
+}
+
+.mb16 {
+  margin-bottom: var(--ql-s2);
+}
+
+.mb24 {
+  margin-bottom: var(--ql-s3);
+}
+
+.mt8 {
+  margin-top: var(--ql-s1);
+}
+
+.mt16 {
+  margin-top: var(--ql-s2);
+}
+
+.mt24 {
+  margin-top: var(--ql-s3);
+}
+
+/* ============================ 7. 数据展示卡片 ============================ */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--ql-s2);
+  margin-bottom: var(--ql-s3);
+}
+
+.stat-card {
+  background: var(--ql-surface);
+  border-radius: var(--ql-radius);
+  box-shadow: var(--ql-shadow);
+  padding: var(--ql-s2) var(--ql-s3);
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ql-title);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-value.ok {
+  color: var(--ql-success);
+}
+
+.stat-value.bad {
+  color: var(--ql-danger);
+}
+
+.stat-value.pending {
+  color: var(--ql-warning);
+}
+
+.stat-value.primary {
+  color: var(--ql-primary);
+}
+
+.stat-label {
+  font-size: var(--ql-fs-tip);
+  color: var(--ql-muted);
+  margin-top: 4px;
+}
+
+/* ============================ 8. 题干与选项阅读样式 ============================ */
+.ql-question-title {
+  color: var(--ql-title);
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ql-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ql-s1);
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--ql-radius-sm);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  color: var(--ql-text);
+  transition: background var(--ql-dur-fast) var(--ql-ease-spring),
+    border-color var(--ql-dur-fast) var(--ql-ease-spring),
+    color var(--ql-dur-fast) var(--ql-ease-spring);
+}
+
+.ql-option.is-selected {
+  background: var(--ql-primary-soft);
+  border-color: var(--ql-primary-line);
+}
+
+/* ============================ 9. 空状态 ============================ */
+.empty-hint {
+  padding: var(--ql-s5) var(--ql-s3);
+  text-align: center;
+  color: var(--ql-muted);
+  font-size: var(--ql-fs-small);
+}
+
+/* ============================ 10. Element Plus 组件微调 ============================ */
+.el-card {
+  border: none;
+  border-radius: var(--ql-radius);
+  box-shadow: var(--ql-shadow);
+}
+
+.el-card__header {
+  padding: var(--ql-s2) var(--ql-s3);
+  border-bottom: 1px solid var(--ql-border-light);
+  font-size: var(--ql-fs-section);
+  font-weight: 600;
+  color: var(--ql-title);
+}
+
+.el-card__body {
+  padding: var(--ql-s3);
+}
+
+/* 表格：轻描边、安静的表头 */
+.el-table {
+  --el-table-border-color: var(--ql-border-light);
+  --el-table-row-hover-bg-color: var(--ql-primary-soft);
+  /* 表格底跟随卡片表面（--el-fill-color-blank 已下沉给输入框，不能复用） */
+  --el-table-bg-color: var(--ql-surface);
+  --el-table-tr-bg-color: var(--ql-surface);
+  --el-table-header-bg-color: var(--ql-surface-soft);
+  font-size: var(--ql-fs-body);
+}
+
+.el-table th.el-table__cell {
+  background: var(--ql-surface-soft) !important;
+  color: var(--ql-title);
+  font-weight: 600;
+  /*
+   * 表头一律单行。
+   * 窄列（如「序号」width=70，再减去首列 24px 内边距）+ 居中列的 flex 布局，
+   * 会把「序号」这种两字表头折成竖排（序 / 号 上下堆叠），nowrap 彻底避免。
+   */
+  white-space: nowrap;
+}
+
+.el-table td.el-table__cell,
+.el-table th.el-table__cell {
+  padding: 10px 0;
+}
+
+/*
+ * 居中列的内容对齐
+ * el-table 会给 align="center" 的单元格加 .is-center，这里统一改为弹性居中：
+ * 关键在于让同一单元格内的多个按钮与 el-dropdown 垂直居中对齐
+ * （el-dropdown 自身 line-height 与 el-button 不同，默认基线对齐会出现几像素错位）。
+ */
+.el-table .el-table__cell.is-center > .cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ql-s1);
+  flex-wrap: nowrap;
+}
+
+.el-table .el-table__cell.is-center > .cell .el-button + .el-button {
+  margin-left: 0;
+}
+
+.el-table .el-table__cell.is-center > .cell .el-dropdown {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.el-table--border,
+.el-table--group {
+  border-radius: var(--ql-radius);
+}
+
+/*
+ * 固定列（fixed="right" / "left"）的分隔弱化。
+ * EP 默认给固定列加 10px 宽的 inset 阴影 `rgba(0,0,0,.12)`；在本项目的浅色表里，
+ * 它看起来像「操作列浮在表格之上」，层级突兀。
+ * 改为**极淡的同色阴影** —— 保留「此列已固定、可横向滚动」的提示，但不再抢视线。
+ */
+.el-table-fixed-column--right.is-first-column::before {
+  box-shadow: 1px 0 6px color-mix(in oklab, var(--ql-title) 6%, transparent) inset;
+}
+
+.el-table-fixed-column--left.is-last-column::before {
+  box-shadow: -1px 0 6px color-mix(in oklab, var(--ql-title) 6%, transparent) inset;
+}
+
+/* 按钮：主/次/文本层次分明，减少大色块 */
+.el-button {
+  border-radius: var(--ql-radius-sm);
+  font-weight: 500;
+  transition: background-color var(--ql-dur-fast) var(--ql-ease-spring),
+    border-color var(--ql-dur-fast) var(--ql-ease-spring),
+    color var(--ql-dur-fast) var(--ql-ease-spring),
+    box-shadow var(--ql-dur-fast) var(--ql-ease-spring),
+    transform var(--ql-dur-fast) var(--ql-ease-spring);
+}
+
+/* 按下手感：1px 下沉（幅度 ≤2px，见 16 号 §7 H-3），不做弹跳/缩放 */
+.el-button:not(.is-disabled):active {
+  transform: translateY(1px);
+}
+
+/*
+ * 主按钮：实心填充 = 靛蓝点缀色，其上近白字对比度 6.0:1（16 号 §1 对比度要求）。
+ * 这里显式绑定令牌（而不是依赖 EP 默认继承），
+ * 保证「按钮底色」与「点缀色」在以后调整时不会各自漂移。
+ */
+.el-button--primary {
+  --el-button-bg-color: var(--ql-primary-fill);
+  --el-button-border-color: var(--ql-primary-fill);
+  --el-button-text-color: var(--ql-on-primary);
+  --el-button-hover-bg-color: var(--ql-primary-fill-hover);
+  --el-button-hover-border-color: var(--ql-primary-fill-hover);
+  --el-button-hover-text-color: var(--ql-on-primary);
+  --el-button-active-bg-color: var(--ql-primary-active);
+  --el-button-active-border-color: var(--ql-primary-active);
+  --el-button-active-text-color: var(--ql-on-primary);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--ql-primary) 30%, transparent);
+}
+
+.el-button--primary:hover {
+  box-shadow: 0 2px 6px color-mix(in oklab, var(--ql-primary) 36%, transparent);
+}
+
+.el-button.is-link,
+.el-button.is-text {
+  padding: 0 4px;
+  height: auto;
+}
+
+/* 标签胶囊统一形态见 §11（16 号 C-1），此处不再重复定义 */
+
+/* 输入与选择：统一描边与圆角 */
+.el-input__wrapper,
+.el-textarea__inner,
+.el-select__wrapper {
+  border-radius: var(--ql-radius-sm);
+}
+
+.el-input__wrapper.is-focus,
+.el-select__wrapper.is-focused {
+  box-shadow: 0 0 0 1px var(--ql-primary) inset;
+}
+
+/* 对话框：圆角 + 柔和阴影 */
+.el-dialog {
+  border-radius: var(--ql-radius-lg);
+  box-shadow: var(--ql-shadow-pop);
+  padding: 0;
+}
+
+.el-dialog__header {
+  padding: var(--ql-s3) var(--ql-s3) var(--ql-s2);
+  margin-right: 0;
+  border-bottom: 1px solid var(--ql-border-light);
+}
+
+.el-dialog__title {
+  font-size: var(--ql-fs-section);
+  font-weight: 600;
+  color: var(--ql-title);
+}
+
+.el-dialog__body {
+  padding: var(--ql-s3);
+}
+
+.el-dialog__footer {
+  padding: var(--ql-s2) var(--ql-s3) var(--ql-s3);
+  border-top: 1px solid var(--ql-border-light);
+}
+
+/* 抽屉与下拉菜单 */
+.el-dropdown-menu__item {
+  font-size: var(--ql-fs-small);
+}
+
+.el-descriptions__label {
+  color: var(--ql-muted) !important;
+  font-weight: 500 !important;
+}
+
+.el-tabs__item {
+  font-size: var(--ql-fs-body);
+}
+
+/* 侧边栏菜单：浅底选中态，无重色块 */
+.el-menu {
+  border-right: none !important;
+}
+
+.el-menu-item {
+  height: 42px;
+  line-height: 42px;
+  margin: 2px 8px;
+  border-radius: var(--ql-radius-sm);
+  font-size: var(--ql-fs-body);
+  color: var(--ql-text);
+  transition: background-color var(--ql-dur-fast) var(--ql-ease-spring),
+    color var(--ql-dur-fast) var(--ql-ease-spring);
+}
+
+/* hover 用比侧边栏底色（--ql-aside）深一档的 --ql-surface-high，形成轻微下沉反馈；
+   不能沿用 --ql-surface-sunken（#edeff3 与侧栏底色过近，几乎看不出 hover） */
+.el-menu-item:hover {
+  background: var(--ql-surface-high);
+}
+
+/*
+ * 导航选中态（V2.0）
+ * 侧边选中菜单按设计规格用「主色的**极浅同色系底**」：`--ql-primary-soft-hover`（`#dae7fd`）
+ * + 主色文字 + 左侧 3px 主色指示条。指示条用 inset 阴影实现（不占布局、不影响文字对齐）。
+ */
+.el-menu-item.is-active {
+  background: var(--ql-primary-soft-hover);
+  color: var(--ql-primary);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--ql-primary);
+}
+
+.el-menu-item.is-active .el-icon {
+  color: var(--ql-primary);
+}
+
+.el-menu--collapse .el-menu-item {
+  margin: 2px 8px;
+}
+
+/* ==================== 11. 标签胶囊（16 号 C-1 / §6.1） ==================== */
+/*
+ * 全站唯一胶囊形态：高度 22px、圆角 999px、内边距 2px 10px（等价于 0 10px + 22px 高）、
+ * 字号 12px、无描边或 1px 极细描边。三类用途（试卷类型 / 状态 / 考点标签）共用，
+ * 差异只在色语义（13 号 §9.6）。Element Plus 的 el-tag 直接归一化到该形态，
+ * 这样散落在各页的 `<el-tag size="small" effect="plain|light">` 无需逐页改写。
+ */
+.el-tag,
+.el-tag--small,
+.el-tag--large {
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: var(--ql-fs-tip);
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* effect="plain" 时去掉 EP 默认的粗描边，改为极细描边（§6.1.1） */
+.el-tag.el-tag--plain {
+  border-width: 1px;
+}
+
+/* 可点选胶囊（标签流筛选，知识点广场 / 关联考点 / 错题组卷）：
+ * 默认中性底，hover = 点缀浅底，选中 = 点缀浅底 + 点缀色文字 + 1px 点缀色描边（§6.1.3）。 */
+.tag-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 10px;
+  border: 1px solid var(--ql-border-light);
+  border-radius: 999px;
+  background: var(--ql-surface);
+  color: var(--ql-text);
+  font-size: var(--ql-fs-tip);
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--ql-dur-fast) var(--ql-ease-spring),
+    border-color var(--ql-dur-fast) var(--ql-ease-spring),
+    color var(--ql-dur-fast) var(--ql-ease-spring);
+}
+
+.tag-chip:hover {
+  background: var(--ql-primary-soft);
+  border-color: var(--ql-primary-line);
+  color: var(--ql-on-primary-container);
+}
+
+.tag-chip.is-selected {
+  background: var(--ql-primary-soft);
+  border-color: var(--ql-primary);
+  color: var(--ql-on-primary-container);
+}
+
+/* 试卷类型胶囊（竞技型 / 练习型）：与 .tag-chip / .el-tag 同几何（22px / 999px / 12px），
+ * 差异只在色语义。原散落在首页/我的试卷两处的 scoped 定义收敛到此处（16 号 C-1）。 */
+.type-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: var(--ql-fs-tip);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.type-chip.is-competitive {
+  background: var(--ql-danger-soft);
+  color: var(--ql-danger);
+}
+
+.type-chip.is-practice {
+  background: var(--ql-success-soft);
+  color: var(--ql-success);
+}
+
+/* ==================== 12. 折叠面板（16 号 C-2 / §6.2） ==================== */
+/*
+ * el-collapse 的高度展开/收起统一走弹簧缓动（§7 H-1）。
+ * EP 内部对 .el-collapse-item__wrap 用其默认 ease-in-out 曲线，
+ * 这里覆盖为 --ql-ease-spring，使笔记 / 批注等折叠面板手感一致（S-10）。
+ */
+.el-collapse-item__wrap {
+  transition: height var(--ql-dur-panel) var(--ql-ease-spring) !important;
+}
+
+.el-collapse-item__header {
+  font-weight: 500;
+}
+
+/* ==================== 13. 表格失效行（16 号 C-5 / §6.5） ==================== */
+/*
+ * 禁用/失效行（注销用户、废弃资源、已删除题目）视觉弱化：
+ * 文字转辅助色 + 底色下沉，**不使用整体 opacity**（13 号 §9.7、16 号 §6.5.3）。
+ * 页面里给 <el-table> 加 :row-class-name 返回 'row-disabled' 即可。
+ */
+.el-table .el-table__row.row-disabled,
+.el-table .el-table__row.row-disabled td.el-table__cell {
+  color: var(--ql-muted);
+  --el-table-tr-bg-color: var(--ql-surface-soft);
+  background: var(--ql-surface-soft);
+}
+
+/* 失效行不响应 hover 高亮，保持「已下沉」的稳定观感 */
+.el-table .el-table__row.row-disabled:hover td.el-table__cell {
+  background: var(--ql-surface-soft) !important;
+}
+
+/* ==================== 14. 空状态（16 号 C-4 / §6.4） ==================== */
+/*
+ * 统一空状态版式：图标 + 一句具体文案 + 一个明确操作按钮（三处版式一致）。
+ * 组件见 EmptyState.vue；表格内空态仍走紧凑的 .empty-hint（§6.4.2）。
+ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ql-s1);
+  padding: var(--ql-s5) var(--ql-s3);
+  text-align: center;
+}
+
+.empty-state__icon {
+  color: var(--ql-border);
+  font-size: 44px;
+  line-height: 1;
+}
+
+.empty-state__title {
+  font-size: var(--ql-fs-section);
+  font-weight: 600;
+  color: var(--ql-title);
+}
+
+.empty-state__desc {
+  max-width: 440px;
+  font-size: var(--ql-fs-small);
+  color: var(--ql-muted);
+  line-height: 1.7;
+}
+
+.empty-state__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ql-s1);
+  margin-top: var(--ql-s1);
+}
+
+/* 紧凑变体：用于卡片内/窄面板，避免过大的上下留白 */
+.empty-state--compact {
+  padding: var(--ql-s3) var(--ql-s2);
+}
+
+.empty-state--compact .empty-state__icon {
+  font-size: 32px;
+}
+
+/* ==================== 15. 卡片 hover 手感（16 号 §7） ==================== */
+/* 可交互面板：hover 抬升阴影 + 轻微上浮（位移 ≤2px），移出完整回弹 */
+.ql-panel.is-hoverable {
+  cursor: pointer;
+  transition: box-shadow var(--ql-dur-fast) var(--ql-ease-spring),
+    transform var(--ql-dur-fast) var(--ql-ease-spring);
+}
+
+.ql-panel.is-hoverable:hover {
+  box-shadow: var(--ql-shadow-hover);
+  transform: translateY(-1px);
+}
+
+/* ==================== 16. 扁平键值条（基础信息展示） ==================== */
+/*
+ * 用于展示「分类 / 类型 / 状态 / 数量 / 时间」这类只读元信息。
+ *
+ * 为什么不用 `<el-descriptions border>`：它的「灰底标签格 + 白底值格 + 整表框线」
+ * 是整块表格化的观感，既与 10 号快照「表格不用 border / stripe」的取向冲突，
+ * 也让页面显得模板化。改用无框、无底色的键值对后，层级只靠**字色 + 字号**区分
+ * （标签用辅助色 12px、值用标题色 14px），更贴近「理性简约工具」的定位。
+ */
+.info-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ql-s2) var(--ql-s3);
+}
+
+/* 项目较少时用两列（如试卷详情页的 4 项） */
+.info-strip--2col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.info-strip__item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ql-s1);
+  min-width: 0;
+}
+
+.info-strip__label {
+  flex-shrink: 0;
+  font-size: var(--ql-fs-tip);
+  color: var(--ql-muted);
+}
+
+.info-strip__value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--ql-fs-body);
+  color: var(--ql-title);
+}
+
+/* ==================== 18. 窄屏提示（低于 1280px） ==================== */
+/*
+ * 依据《6、技术选型与技术方案》5：最小宽度 1280px，低于该宽度给出明确提示。
+ * body 的 min-width 是 doc 8 的硬性约束，窗口更窄时整页必然横向滚动、右侧被裁切；
+ * 此处不改变该约束，只把这个事实明确告知用户（组件见 App.vue）。
+ */
+.narrow-tip {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ql-s1);
+  height: var(--ql-tip-h);
+  padding: 0 var(--ql-s2);
+  background: var(--ql-warning-soft);
+  border-bottom: 1px solid var(--ql-warning);
+  font-size: var(--ql-fs-small);
+  line-height: 1.4;
+  color: var(--ql-text);
+}
+
+.narrow-tip b {
+  font-weight: 600;
+  color: var(--ql-title);
+}
+
+.narrow-tip__icon {
+  flex-shrink: 0;
+  color: var(--ql-warning);
+}
+
+.narrow-tip__action {
+  color: var(--ql-muted);
+}
+
+/*
+ * 提示条出现时，把外壳的内容区下移，避免遮挡 header、答题页导航与登录卡片。
+ * 用 padding-top 而非 margin-top：.shell 是 #app 的首个子元素，margin 会与父元素
+ * 发生外边距折叠，导致文档多出 36px 而出现多余的纵向滚动条。
+ */
+body.ql-narrow .shell {
+  padding-top: var(--ql-tip-h);
+}
+
+body.ql-narrow .auth-page {
+  padding-top: var(--ql-tip-h);
+}
+
+/* ==================== 19. 统一界面状态（13 号 §9） ==================== */
+/*
+ * S1 置灰禁用态的「可点击」外壳
+ *
+ * 背景：13 号 §9.2 S1 要求控件**真实 disabled**，而 §4.4 方式A 又要求游客点击时弹出登录引导。
+ * 浏览器不会在 disabled 元素上派发 click 事件（也不会冒泡给父元素），
+ * 因此这里在按钮上盖一层透明遮罩来承接点击：
+ * 控件本身仍是真 disabled（服务层也会拒绝），同时「点击有反馈」得以保留。
+ */
+.s1-guard {
+  position: relative;
+  display: inline-flex;
+  /*
+   * 与 Element Plus 按钮的 `vertical-align: middle` 对齐。
+   * inline-flex 的默认 vertical-align 是 baseline（取首个子项的基线），
+   * 一旦父容器不是 flex（普通 block 里的操作区），包在 GuestGuard 里的按钮
+   * 就会与旁边的原生按钮产生垂直错位。
+   */
+  vertical-align: middle;
+}
+
+.s1-guard__mask {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: not-allowed;
+  border-radius: var(--ql-radius-sm);
+}
+
+/*
+ * 状态提示块：S3 无权限 / S4 资源不可用
+ * 依据 13 号 §9.7-6：三类系统级提示共用同一版式 —— 垂直居中、上下 40px 留白、一个主操作按钮。
+ */
+.state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ql-s2);
+  padding: var(--ql-s5) var(--ql-s3);
+  text-align: center;
+}
+
+.state-block__icon {
+  color: var(--ql-muted);
+  font-size: 32px;
+  line-height: 1;
+}
+
+.state-block__title {
+  font-size: var(--ql-fs-section);
+  font-weight: 600;
+  color: var(--ql-title);
+}
+
+.state-block__desc {
+  max-width: 520px;
+  font-size: var(--ql-fs-small);
+  color: var(--ql-muted);
+  line-height: 1.7;
+}
+
+.state-block__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ql-s1);
+  margin-top: var(--ql-s1);
+}
+
+/* ==================== 20. 减弱动画（16 号 §7 H-5） ==================== */
+/*
+ * 系统开启「减弱动态效果」时，关闭位移/高度过渡与过冲，只保留即时的状态切换。
+ * 这一条是硬性要求：折叠面板与标签胶囊的弹簧动画都依赖它兜底。
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

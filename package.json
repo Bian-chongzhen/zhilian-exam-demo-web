@@ -1,0 +1,35 @@
+{
+  "name": "zhilian-qbank-web",
+  "private": true,
+  "version": "1.0.0-demo",
+  "type": "module",
+  "description": "知练题库系统 · 纯前端 Demo（Mock 真逻辑层，用于验证前端功能与项目需求）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "preview": "vite preview",
+    "icons:sync": "node scripts/icons.mjs sync",
+    "icons:check": "node scripts/icons.mjs check",
+    "smoke": "esbuild scripts/smoke/v05.ts --bundle --platform=node --format=esm --alias:@=./src --outfile=scripts/smoke/.build.mjs --log-level=warning && node scripts/smoke/.build.mjs && esbuild scripts/smoke/v1plus.ts --bundle --platform=node --format=esm --alias:@=./src --outfile=scripts/smoke/.build2.mjs --log-level=warning && node scripts/smoke/.build2.mjs",
+    "release:check": "node scripts/preflight.mjs"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "@iconify-json/ph": "^1.2.2",
+    "@iconify/vue": "^5.0.2",
+    "echarts": "^5.5.1",
+    "element-plus": "^2.8.8",
+    "markdown-it": "^15.0.2",
+    "pinia": "^2.2.6",
+    "vue": "^3.5.13",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "~5.6.3",
+    "vite": "^5.4.11",
+    "vue-tsc": "^2.1.10"
+  }
+}

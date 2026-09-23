@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+.vite/
+.npm-cache/
+*.log
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# 冒烟测试的临时产物
+scripts/smoke/.build*.mjs
