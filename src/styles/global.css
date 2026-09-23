@@ -902,15 +902,55 @@ a:hover {
   font-size: var(--ql-fs-body);
 }
 
-/* 侧边栏菜单：浅底选中态，无重色块 */
-.el-menu {
+/* ============ 侧边栏菜单（本轮：表面统一 + 网格 16/56/48 + 滚动条收敛） ============ */
+/*
+ * 全部规则限定在 .shell-aside 内：本文件的 el-menu 规则只服务侧边栏，
+ * 加前缀后即便将来别处引入 el-menu 也不会被连带影响。
+ */
+.shell-aside .el-menu {
   border-right: none !important;
 }
 
-.el-menu-item {
-  height: 42px;
-  line-height: 42px;
-  margin: 2px 8px;
+/*
+ * ① 表面统一（本轮关键修复，同时解决「分组色块」与「接缝错位」两个问题）
+ *
+ * EP 的 .el-menu 会把 --el-menu-bg-color(=#fff) 刷在侧边栏之上，而该变量定义在 :root，
+ * 因此在这里覆盖即可让菜单让出底色、露出侧栏自己的 --ql-aside。
+ *
+ * 修复前的三段拼色（像素实测）：
+ *   品牌带 #f0f1f3 → 菜单 #ffffff → 「管理后台」标题条 #f0f1f3 → 管理菜单 #ffffff → 页脚 #f0f1f3
+ * 「管理后台」那条 #f0f1f3 并不是设计出来的分组底色，而是**全栏唯一没被 el-menu 盖住的地方**，
+ * 于是露出了侧栏自己的底色，被误读成「厚重背景色块」；
+ * 同时左右接缝两侧的深浅关系在 y=60 处正好互换（上：左深右浅；下：左浅右深），
+ * 读起来像「错位／不规则留白」——其实 border-right 是一条笔直的线（实测 x 恒定、色恒为 #edeef0）。
+ * 修复后：整栏为连续的一层 --ql-aside，色块自然消失、接缝恢复平整。
+ *
+ * 附带修正一处原有自相矛盾：下方的 hover 注释本就假定底色是 --ql-aside，
+ * 是 EP 的白底让它失效（白底上 #e7e8eb 才是深一档；灰底上才是「轻微下沉」的本意）。
+ *
+ * ⚠ 变量覆盖位置有讲究（实测确认）：
+ *   --el-menu-bg-color 定义在 :root          → 在 .shell-aside 上覆盖【生效】
+ *   --el-scrollbar-*   定义在 .el-scrollbar 自身 → 必须在 .shell-nav 上覆盖（见本节末）
+ */
+.shell-aside {
+  --el-menu-bg-color: transparent;
+
+  /*
+   * ② 网格：左导轨 16px ／ 文字列 56px
+   * 图标 x = 8(条目 margin) + 8(padding) = 16px，与品牌 logo(16px)、分组标题(16px) 同轨；
+   * 图标列 32px（与 32px logo 等宽）+ 8px 间距 → 文字 x = 16+32+8 = 56px，与品牌文字同列。
+   * 修复前为三个左边缘（16 / 28 / 57），文字列 57px 与品牌 58px 只是巧合差 1px。
+   * 折叠态自洽：条目宽 64−16=48px，内容宽 48−16=32px = 图标列 32px → 图标严格居中。
+   */
+  --el-menu-base-level-padding: 8px;
+  --el-menu-icon-width: 32px;
+}
+
+.shell-aside .el-menu-item {
+  /* ③ 行高 48px（8px 栅格常量）：条目等高，上下相接 */
+  height: 48px;
+  line-height: 48px;
+  margin: 0 8px;
   border-radius: var(--ql-radius-sm);
   font-size: var(--ql-fs-body);
   color: var(--ql-text);
@@ -918,9 +958,24 @@ a:hover {
     color var(--ql-dur-fast) var(--ql-ease-spring);
 }
 
-/* hover 用比侧边栏底色（--ql-aside）深一档的 --ql-surface-high，形成轻微下沉反馈；
+/* 图标与文字间距纳入令牌（EP 默认 margin-right: 5px 不在 8px 栅格上） */
+.shell-aside .el-menu-item [class^='el-icon'] {
+  margin-right: var(--ql-s1);
+}
+
+/*
+ * ④ 菜单分区：只用间距分割，不另加背景条
+ * 公开分组恒为 2 项且恒在首位（游客态下它也是仅有的 2 项），
+ * 故用 :nth-child(2) 在它与「个人中心」之间留出一段节奏间隔。
+ * ⚠ 此处依赖上述菜单结构，日后若增删菜单需同步复核本规则。
+ */
+.shell-aside .el-menu:first-of-type > .el-menu-item:nth-child(2) {
+  margin-bottom: var(--ql-s2);
+}
+
+/* hover：比侧栏底色（--ql-aside）深一档的 --ql-surface-high，形成轻微下沉反馈；
    不能沿用 --ql-surface-sunken（#eeeff1 与侧栏底色过近，几乎看不出 hover） */
-.el-menu-item:hover {
+.shell-aside .el-menu-item:hover {
   background: var(--ql-surface-high);
 }
 
@@ -929,19 +984,38 @@ a:hover {
  * 侧边选中菜单按设计规格用「主色的**极浅同色系底**」：`--ql-primary-soft-hover`（`#dae7fd`）
  * + 主色文字 + 左侧 3px 主色指示条。指示条用 inset 阴影实现（不占布局、不影响文字对齐）。
  */
-.el-menu-item.is-active {
+.shell-aside .el-menu-item.is-active {
   background: var(--ql-primary-soft-hover);
   color: var(--ql-primary);
   font-weight: 600;
   box-shadow: inset 3px 0 0 var(--ql-primary);
 }
 
-.el-menu-item.is-active .el-icon {
+.shell-aside .el-menu-item.is-active .el-icon {
   color: var(--ql-primary);
 }
 
-.el-menu--collapse .el-menu-item {
-  margin: 2px 8px;
+.shell-aside .el-menu--collapse .el-menu-item {
+  margin: 0 8px;
+}
+
+/*
+ * ⑤ 侧边栏滚动条收敛
+ * 侧栏用的是 EP 自带的 el-scrollbar（不是原生滚动条）。修复前走 EP 默认：
+ *   --el-scrollbar-bg-color: var(--el-text-color-secondary)（本项目映射到 --ql-muted #666d78）
+ *   且 opacity .3 → 叠在白底上实测渲染 #D1D3D6（0.3×#666d78 + 0.7×#fff，逐通道吻合），
+ * 比全站滚动条令牌 --ql-scrollbar(#dadcdf) 更重、观感「外来」。
+ * 覆盖后常态 ≈ 0.5×#dadcdf 叠于 #f0f1f3 ≈ #E5E7E9（几乎不显眼但仍可辨），hover 略深。
+ *
+ * ⚠ --el-scrollbar-* 定义在 .el-scrollbar 自身，写在外层 .shell-aside 上【无效】（会被 EP 压回），
+ *    必须落在 .shell-nav —— 它就是 el-scrollbar 的根元素（特异性 0,2,0 > EP 的 0,1,0）。
+ * ⚠ 必须带 .shell-aside 前缀：.el-scrollbar__bar 被 el-table 内部复用，全局改会波及所有表格滚动条。
+ */
+.shell-aside .shell-nav {
+  --el-scrollbar-bg-color: var(--ql-scrollbar);
+  --el-scrollbar-hover-bg-color: var(--ql-scrollbar-hover);
+  --el-scrollbar-opacity: 0.5;
+  --el-scrollbar-hover-opacity: 0.85;
 }
 
 /* ==================== 11. 标签胶囊（16 号 C-1 / §6.1） ==================== */

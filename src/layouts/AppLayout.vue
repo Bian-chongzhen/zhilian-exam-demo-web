@@ -304,7 +304,7 @@ onMounted(() => {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  /* 侧边栏独立浅灰底（--ql-aside #eff1f5），比主内容区（--ql-bg #f7f8fa）深一档，
+  /* 侧边栏独立浅灰底（--ql-aside #f0f1f3），比主内容区（--ql-bg #f7f8f9）深一档，
      与白色顶栏 / 白色卡片形成三层分区（V2.0 设计规格：页面外层极浅冷灰、侧边栏独立浅灰、卡片白） */
   background: var(--ql-aside);
   border-right: 1px solid var(--ql-border-light);
@@ -318,7 +318,9 @@ onMounted(() => {
 .shell-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  /* gap 8px（原 10px 不在 8px 栅格上）：品牌文字左边缘 = 16 + 32(logo) + 8 = 56px，
+     与菜单文字列（16 + 32(图标列) + 8）严格同列，见 global.css 侧边栏菜单节 */
+  gap: var(--ql-s1);
   height: var(--ql-header-h);
   padding: 0 var(--ql-s2);
   border-bottom: 1px solid var(--ql-border-light);
@@ -373,9 +375,18 @@ onMounted(() => {
   padding: var(--ql-s1) 0;
 }
 
+/*
+ * 分组标题（管理后台）：只用「大留白 + 弱化字」做分区，不拉背景条。
+ * 上留白 24px 作为分区隔断；字重显式 400，避免继承标题的 600。
+ * 左边缘 16px，与菜单图标导轨、品牌 logo 同轨（见 global.css 侧边栏菜单节的 16px 导轨）。
+ * 说明：该元素不在任何 el-menu 内，因此它的底色一直是侧栏自身的 --ql-aside；
+ * 修复前正因如此才成了「全栏唯一没被 el-menu 白底盖住的地方」而被看成灰块，
+ * 表面统一（el-menu 透明）后色差自然消失，无需任何背景声明。
+ */
 .shell-group {
-  padding: var(--ql-s2) 16px 4px;
+  padding: var(--ql-s3) 16px var(--ql-s1);
   font-size: var(--ql-fs-tip);
+  font-weight: 400;
   color: var(--ql-muted);
   letter-spacing: 0.04em;
 }
